@@ -3,8 +3,13 @@ import json
 from django.views import View
 from django.http  import JsonResponse
 
-from .models      import Question, Answer, UserQuestion, Result
 from user.utils   import LoginConfirm
+from .models      import (
+    Question,
+    Answer,
+    UserQuestion,
+    Result
+)
 
 def CheckResult(find_drug):
     result = {
@@ -49,11 +54,8 @@ class SurveyView(View):
                 question        = next_question.question
                 sub_question    = next_question.sub_question
                 answer_all      = Question.objects.filter(id = int(next_answer[0])).prefetch_related('answer_set')
-                answer_box      = []
-                answer_type_box = []
-                for j in answer_all[0].answer_set.all():
-                    answer_box.append(j.answer)
-                    answer_type_box.append(j.answer_type)
+                answer_box      = [j.answer_type for j in answer_all[0].answer_set.all()]
+                answer_type_box = [j.answer_type for j in answer_all[0].answer_set.all()]
                 return JsonResponse(
                     {
                         'question' : question,
@@ -87,11 +89,8 @@ class SurveyView(View):
                 next_question   = Question.objects.get(id = int(next_answer[0]))
                 question        = next_question.question
                 answer_all      = Question.objects.filter(id = int(next_answer[0])).prefetch_related('answer_set')
-                answer_box      = []
-                answer_type_box = []
-                for j in answer_all[0].answer_set.all():
-                    answer_box.append(j.answer)
-                    answer_type_box.append(j.answer_type)
+                answer_box      = [j.answer_type for j in answer_all[0].answer_set.all()]
+                answer_type_box = [j.answer_type for j in answer_all[0].answer_set.all()]
                 return JsonResponse(
                             {
                                 'question' : question,
@@ -110,11 +109,7 @@ class SurveyResultView(View):
         try:
             if data['result']:
                 user             = request.user
-                user             = UserQuestion.objects.filter(user = user.id)
-                user_select_list = []
-                for i in user:
-                    user_select_answer = i.user_answer
-                    user_select_list.append(user_select_answer)
+                user_select_list = [i.user_answer for i in user]
                 user_select_list = set(user_select_list)
                 CheckResult(user_select_list)
             return JsonResponse({'message' : 'INVALID_RESULT'}, status=401)

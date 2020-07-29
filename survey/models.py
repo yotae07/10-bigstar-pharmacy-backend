@@ -4,10 +4,10 @@ from user.models import User
 
 class Question(models.Model):
     question     = models.CharField(max_length=256)
-    sub_quesion   = models.CharField(max_length=256)
+    sub_quesion  = models.CharField(max_length=256)
     userquestion = models.ManyToManyField(User, through='UserQuestion', related_name = 'user_question')
     created_at   = models.DateTimeField(auto_now_add = True)
-    update_at    = models.DateTimeField(auto_now = True)
+    updated_at   = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'questions'
@@ -16,7 +16,7 @@ class Answer(models.Model):
     answer      = models.CharField(max_length=256)
     question    = models.ForeignKey('Question', on_delete = models.SET_NULL, null=True)
     created_at  = models.DateTimeField(auto_now_add = True)
-    update_at   = models.DateTimeField(auto_now = True)
+    updated_at  = models.DateTimeField(auto_now = True)
     answer_tag  = models.CharField(max_length = 256)
     answer_type = models.CharField(max_length = 100, null=True)
 
