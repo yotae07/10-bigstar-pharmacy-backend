@@ -23,10 +23,8 @@ def CheckResult(find_drug):
     }
     for key in result.keys():
         if find_drug == result[key]:
-            show_result = Result.objects.get(name = key)
-            return show_result
-        show_result = Result.objects.get(name = '칼슘마그네슘비타민D')
-        return show_result
+            return Result.objects.get(name = key)
+    return Result.objects.get(name = '칼슘마그네슘비타민D')
 
 class SurveyView(View):
     @LoginConfirm
@@ -35,25 +33,27 @@ class SurveyView(View):
             data = json.loads(request.body)
             if data['next'] and data['answer'][0] != "None":
                 for j in data['answer']:
-                    recode_answer   = Answer.objects.select_related('question').get(answer = j)
+                    recode_answer = Answer.objects.select_related('question').get(answer = j)
                     UserQuestion(
                         user        = request.user,
                         question    = recode_answer.question,
                         user_answer = recode_answer.id
                         ).save()
-                next_answer      = []
-                next_answer      = [Answer.objects.get(answer = i).answer_tag for i in data['next']]
-                list_next_answer = list(set(next_answer))
+                list_next_answer = list(set([Answer.objects.get(answer = i).answer_tag for i in data['next']]))
                 answer_all       = Question.objects.filter(id = int(list_next_answer[0])).prefetch_related('answer_set')
                 answer_box       = [j.answer_type for j in answer_all[0].answer_set.all()]
-                answer_type_box  = [j.answer_type for j in answer_all[0].answer_set.all()]
+                answer_type      = list(set([j.answer_type for j in answer_all[0].answer_set.all()]))
+                if answer_all[0].sub_quesion:
+                    sub_question = answer_all[0].sub_quesion
+                else:
+                    sub_question = "None"
                 return JsonResponse(
                     {
                         'question_id': answer_all[0].id,
                         'question' : answer_all[0].question,
-                        'sub_question' : answer_all[0].sub_question,
+                        'sub_question' : sub_question,
                         'answer' : answer_box,
-                        'answer_type' : answer_type_box
+                        'answer_type' : answer_type[0]
                     }, status=200)
             elif data['next'] and data['answer'][0] == "None":
                 if data['next'] == ["100"]:
@@ -61,6 +61,7 @@ class SurveyView(View):
                 next_answer = []
                 for i in data['next']:
                     if i == "0":
+                        UserQuestion.objects.filter(user = request.user).delete()
                         show_question = Question.objects.get(id = 1)
                         show_answer   = Answer.objects.get(id=1)
                         return JsonResponse(
@@ -80,15 +81,18 @@ class SurveyView(View):
                 list_next_answer = list(set(next_answer))
                 answer_all       = Question.objects.filter(id = int(list_next_answer[0])).prefetch_related('answer_set')
                 answer_box       = [j.answer_type for j in answer_all[0].answer_set.all()]
-                answer_type_box  = [j.answer_type for j in answer_all[0].answer_set.all()]
-                answer_type      = list(set(answer_type_box))
+                answer_type      = list(set([j.answer_type for j in answer_all[0].answer_set.all()]))
+                if answer_all[0].sub_quesion:
+                    sub_question = answer_all[0].sub_quesion
+                else:
+                    sub_question = "None"
                 return JsonResponse(
                             {
                                 'question_id': answer_all[0].id,
                                 'question' : answer_all[0].question,
-                                'sub_question' : answer_all[0].sub_question,
+                                'sub_question' : sub_question,
                                 'answer' : answer_box,
-                                'answer_type' : answer_type_box
+                                'answer_type' : answer_type[0]
                             }, status=200)
             else:
                 return JsonResponse({'message' : 'INVALID_REQUEST'}, status=401)
@@ -104,7 +108,6 @@ class SurveyResultView(View):
                 user             = User.objects.filter(user = request.user)
                 user_select_list = [i.user_answer for i in user]
                 result           = CheckResult(user_select_list)
-            if result:
                 return JsonResponse(
                     {
                         'name': result.name,
