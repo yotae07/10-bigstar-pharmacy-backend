@@ -3,11 +3,11 @@ from django.db import models
 from user.models import User
 
 class Question(models.Model):
-    question     = models.CharField(max_length=256)
-    sub_quesion  = models.CharField(max_length=256)
-    userquestion = models.ManyToManyField(User, through='UserQuestion', related_name = 'user_question')
-    created_at   = models.DateTimeField(auto_now_add = True)
-    updated_at   = models.DateTimeField(auto_now = True)
+    question      = models.CharField(max_length=256)
+    sub_quesion   = models.CharField(max_length=256)
+    user_question = models.ManyToManyField(User, through='UserQuestion', related_name = 'user_question')
+    created_at    = models.DateTimeField(auto_now_add = True)
+    updated_at    = models.DateTimeField(auto_now = True)
 
     class Meta:
         db_table = 'questions'
