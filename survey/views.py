@@ -35,35 +35,23 @@ class SurveyView(View):
             data = json.loads(request.body)
             if data['next'] and data['answer'][0] != "None":
                 for j in data['answer']:
-                    recode_answer = Answer.objects.select_related('question').get(answer = j)
+                    recode_answer   = Answer.objects.select_related('question').get(answer = j)
                     UserQuestion(
                         user        = request.user,
-                        question    = recode_answer.quesion,
+                        question    = recode_answer.question,
                         user_answer = recode_answer.id
                         ).save()
-                next_answer = []
-                for i in data['next']:
-                    user_answer  = Answer.objects.get(answer = i)
-                    user_answer1 = Answer.objects.get(answer = data['answer'])
-                    UserQuestion(
-                        user        = request.user,
-                        question    = user_answer.question_id,
-                        user_answer = user_answer1.id
-                    ).save()
-                    next_answer.append(user_answer.answer_tag)
-                    set_next_answer = set(next_answer)
-                list_next_answer    = list(set_next_answer)
-                next_question       = Question.objects.get(id = int(list_next_answer[0]))
-                question            = next_question.question
-                sub_question        = next_question.sub_question
-                answer_all          = Question.objects.filter(id = int(list_next_answer[0])).prefetch_related('answer_set')
-                answer_box          = [j.answer_type for j in answer_all[0].answer_set.all()]
-                answer_type_box     = [j.answer_type for j in answer_all[0].answer_set.all()]
+                next_answer      = []
+                next_answer      = [Answer.objects.get(answer = i).answer_tag for i in data['next']]
+                list_next_answer = list(set(next_answer))
+                answer_all       = Question.objects.filter(id = int(list_next_answer[0])).prefetch_related('answer_set')
+                answer_box       = [j.answer_type for j in answer_all[0].answer_set.all()]
+                answer_type_box  = [j.answer_type for j in answer_all[0].answer_set.all()]
                 return JsonResponse(
                     {
-                        'question_id': next_question.id,
-                        'question' : question,
-                        'sub_question' : sub_question,
+                        'question_id': answer_all[0].id,
+                        'question' : answer_all[0].question,
+                        'sub_question' : answer_all[0].sub_question,
                         'answer' : answer_box,
                         'answer_type' : answer_type_box
                     }, status=200)
@@ -73,14 +61,12 @@ class SurveyView(View):
                 next_answer = []
                 for i in data['next']:
                     if i == "0":
-                        show_question     = Question.objects.get(id = 1)
-                        show_sub_question = show_question.sub_question
-                        show_answer       = Answer.objects.get(id=1)
+                        show_question = Question.objects.get(id = 1)
+                        show_answer   = Answer.objects.get(id=1)
                         return JsonResponse(
                             {
                                 'question_id': show_question.id,
                                 'question' : show_question.question,
-                                'sub_question' : show_sub_question,
                                 'answer' : show_answer.answer,
                                 'answer_type' : show_answer.answer_type
                             }, status=200)
@@ -90,20 +76,17 @@ class SurveyView(View):
                         question    = recode_answer.question,
                         user_answer = recode_answer.id
                     ).save()
-                    user_answer = Answer.objects.get(answer = i)
-                    next_answer.append(user_answer.answer_tag)
-                    set_next_answer = set(next_answer)
-                list_next_answer    = list(set_next_answer)
-                next_question       = Question.objects.get(id = int(list_next_answer[0]))
-                question            = next_question.question
-                answer_all          = Question.objects.filter(id = int(list_next_answer[0])).prefetch_related('answer_set')
-                answer_box          = [j.answer_type for j in answer_all[0].answer_set.all()]
-                answer_type_box     = [j.answer_type for j in answer_all[0].answer_set.all()]
+                    next_answer.append(Answer.objects.get(answer = i).answer_tag)
+                list_next_answer = list(set(next_answer))
+                answer_all       = Question.objects.filter(id = int(list_next_answer[0])).prefetch_related('answer_set')
+                answer_box       = [j.answer_type for j in answer_all[0].answer_set.all()]
+                answer_type_box  = [j.answer_type for j in answer_all[0].answer_set.all()]
+                answer_type      = list(set(answer_type_box))
                 return JsonResponse(
                             {
-                                'question_id': next_question.id,
-                                'question' : question,
-                                'sub_question' : show_sub_question,
+                                'question_id': answer_all[0].id,
+                                'question' : answer_all[0].question,
+                                'sub_question' : answer_all[0].sub_question,
                                 'answer' : answer_box,
                                 'answer_type' : answer_type_box
                             }, status=200)
@@ -124,8 +107,8 @@ class SurveyResultView(View):
             if result:
                 return JsonResponse(
                     {
-                        'name': show_result.name,
-                        'result': show_result.user_result
+                        'name': result.name,
+                        'result': result.user_result
                     }, status=200)
         except KeyError:
             JsonResponse({'message' : 'KEY_ERROR'}, status=401)
