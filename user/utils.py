@@ -1,9 +1,15 @@
-import json, jwt
+import json
+import jwt
+>>>>>>> master
 
 from django.http        import JsonResponse
 
 from .models            import User
-from pilly.settings     import SECRET_KEY, ALGORITHM
+
+from pilly.settings     import (
+    SECRET_KEY,
+    ALGORITHM
+)
 
 class LoginConfirm:
     def __init__(self, func):
@@ -23,7 +29,7 @@ class LoginConfirm:
             return JsonResponse({'message': 'EXPIRED_TOKEN'}, status=401)
 
         except jwt.DecodeError:
-            return JsonRespose({'message': 'INVALID_USER'}, status=401)
+            return JsonResponse({'message': 'INVALID_USER'}, status=401)
 
         except User.DoesNotExist:
             return JsonResponse({'message': 'INVALID_USER'}, status=401)

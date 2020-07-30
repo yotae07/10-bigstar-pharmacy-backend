@@ -1,11 +1,23 @@
-import json, bcrypt, jwt, re
+import json
+import bcrypt
+import jwt
+import re
 
 from django.views     import View
 from django.http      import JsonResponse
 
 from .models          import User
 from .utils           import LoginConfirm 
-from pilly.settings   import SECRET_KEY, ALGORITHM
+
+from pilly.settings   import (
+    SECRET_KEY,
+    ALGORITHM
+)
+
+def LogInCheck(user, pwd):
+    if user and bcrypt.checkpw(pwd.encode('utf-8'), user.password.encode('utf-8')):
+        token = jwt.encode({'user': user.id}, SECRET_KEY, ALGORITHM).decode('utf-8')
+        return JsonResponse({'token': token}, status=200)
 
 def validation_name(name):
     check = [bool(lambda name: re.search("[가-힣]+$", name))]
@@ -41,8 +53,8 @@ def validation_contact(contact):
 def validation_password(password):
     check = [
         bool(lambda password: any(x.isdigit() for x in password)),
-        #bool(lambda password: any(x.islower() for x in password)),
-        #bool(lambda password: any(x.isupper() for x in password)),
+        bool(lambda password: any(x.islower() for x in password)),
+        bool(lambda password: any(x.isupper() for x in password)),
         bool(lambda password: len(password) == len(password.replace(" ", ""))),
         bool(lambda password: len(password) >= 5)
         ]
@@ -81,22 +93,16 @@ class SignInView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            if User.objects.filter(email = data['email']).exists():
-                user = User.objects.filter(email = data['email'])
-                if bcrypt.checkpw(data['password'].encode('utf-8'), user[0].password.encode('utf-8')):
-                    access_user = User.objects.get(email = data['email'])
-                    token       = jwt.encode({'user': access_user.id}, SECRET_KEY, ALGORITHM).decode('utf-8')
-                    return JsonResponse({'token': token}, status=200)
-                return JsonResponse({'message': 'INVALID_PASSWORD'}, status=401)
-            elif User.objects.filter(contact = data['contact']).exists():
-                user = User.objects.filter(contact = data['contact'])
-                if bcrypt.checkpw(data['password'].encode('utf-8'), user[0].password.encode('utf-8')):
-                    access_user = User.objects.get(contact = data['contact'])
-                    token       = jwt.encode({'user': access_user.id}, SECRET_KEY, ALGORITHM).decode('utf-8')
-                    return JsonResponse({'token': token}, status=200)
-                return JsonResponse({'message': 'INVLID_PASSWORD'}, status=401)
-            return JsonResponse({'message': 'INVLID_INPUT'}, status=401)
+            email = data.get("email")
+            contact = data.get("contact")
+            password = data.get("password")
+
+            if email:
+                user_qs = User.objects.get(email=email)
+                return LogInCheck(user_qs, password)
+            elif contact:
+                user_qs = User.objects.get(contact=contact)
+                return LogInCheck(user_qs, password)
+            return JsonResponse({'message': 'NOT_EXISTS'}, status=401)
         except KeyError:
-            return JsonResponse({'message': 'KEY_ERROR'}, status=401)
-
-
+            return JsonResponse({'message': 'KEY_ERROR'}, status= 401)
