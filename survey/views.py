@@ -1,4 +1,5 @@
 import json
+import random
 
 from django.views import View
 from django.http  import JsonResponse
@@ -12,19 +13,9 @@ from .models      import (
 )
 
 def CheckResult(find_drug):
-    result = {
-        '프로바이오틱스' : [1,2,3,4,5],
-        '칼슘마그네슘비타민D' : [1,2,3,4,6],
-        '비타민B' : [1,2,3,4,7],
-        '비타민C' : [1,2,3,4,8],
-        '루테인' : [1,2,3,4,9],
-        '밀크씨슬' : [1,2,3,4,10],
-        '오메가3' : [1,2,3,4,11]
-    }
-    for key in result.keys():
-        if find_drug == result[key]:
-            return Result.objects.get(name = key)
-    return Result.objects.get(name = '칼슘마그네슘비타민D')
+    result = ['프로바이오틱스', '칼슘마그네슘비타민D', '비타민B', '비타민C', '루테인', '밀크씨슬', '오메가3']
+    num = random.randrange(6)
+    return Result.objects.get(name = result[num])
 
 class SurveyView(View):
     @LoginConfirm
