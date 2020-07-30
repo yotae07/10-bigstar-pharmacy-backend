@@ -4,6 +4,7 @@ import jwt
 from django.http        import JsonResponse
 
 from .models            import User
+
 from pilly.settings     import (
     SECRET_KEY,
     ALGORITHM

@@ -8,6 +8,7 @@ from django.http      import JsonResponse
 
 from .models          import User
 from .utils           import LoginConfirm 
+
 from pilly.settings   import (
     SECRET_KEY,
     ALGORITHM
@@ -15,7 +16,7 @@ from pilly.settings   import (
 
 def LogInCheck(user, pwd):
     if user and bcrypt.checkpw(pwd.encode('utf-8'), user.password.encode('utf-8')):
-        token = jwt.encode({'user': n.id}, SECRET_KEY, ALGORITHM).decode('utf-8')
+        token = jwt.encode({'user': user.id}, SECRET_KEY, ALGORITHM).decode('utf-8')
         return JsonResponse({'token': token}, status=200)
 
 def validation_name(name):
