@@ -1,6 +1,5 @@
 import json
 import jwt
->>>>>>> master
 
 from django.http        import JsonResponse
 
