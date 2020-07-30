@@ -37,8 +37,8 @@ class SurveyView(View):
                 for j in data['answer']:
                     recode_answer = Answer.objects.select_related('question').get(answer = j)
                     UserQuestion(
-                        user = request.user,
-                        question = recode_answer.quesion,
+                        user        = request.user,
+                        question    = recode_answer.quesion,
                         user_answer = recode_answer.id
                         ).save()
                 next_answer = []
@@ -51,14 +51,14 @@ class SurveyView(View):
                         user_answer = user_answer1.id
                     ).save()
                     next_answer.append(user_answer.answer_tag)
-                    next_answer1 = set(next_answer)
-                next_answer2     = list(next_answer1)
-                next_question   = Question.objects.get(id = int(next_answer2[0]))
-                question        = next_question.question
-                sub_question    = next_question.sub_question
-                answer_all      = Question.objects.filter(id = int(next_answer[0])).prefetch_related('answer_set')
-                answer_box      = [j.answer_type for j in answer_all[0].answer_set.all()]
-                answer_type_box = [j.answer_type for j in answer_all[0].answer_set.all()]
+                    set_next_answer = set(next_answer)
+                list_next_answer    = list(set_next_answer)
+                next_question       = Question.objects.get(id = int(list_next_answer[0]))
+                question            = next_question.question
+                sub_question        = next_question.sub_question
+                answer_all          = Question.objects.filter(id = int(list_next_answer[0])).prefetch_related('answer_set')
+                answer_box          = [j.answer_type for j in answer_all[0].answer_set.all()]
+                answer_type_box     = [j.answer_type for j in answer_all[0].answer_set.all()]
                 return JsonResponse(
                     {
                         'question_id': next_question.id,
@@ -92,13 +92,13 @@ class SurveyView(View):
                     ).save()
                     user_answer = Answer.objects.get(answer = i)
                     next_answer.append(user_answer.answer_tag)
-                    next_answer1 = set(next_answer)
-                next_answer2     = list(next_answer1)
-                next_question   = Question.objects.get(id = int(next_answer2[0]))
-                question        = next_question.question
-                answer_all      = Question.objects.filter(id = int(next_answer[0])).prefetch_related('answer_set')
-                answer_box      = [j.answer_type for j in answer_all[0].answer_set.all()]
-                answer_type_box = [j.answer_type for j in answer_all[0].answer_set.all()]
+                    set_next_answer = set(next_answer)
+                list_next_answer    = list(set_next_answer)
+                next_question       = Question.objects.get(id = int(list_next_answer[0]))
+                question            = next_question.question
+                answer_all          = Question.objects.filter(id = int(list_next_answer[0])).prefetch_related('answer_set')
+                answer_box          = [j.answer_type for j in answer_all[0].answer_set.all()]
+                answer_type_box     = [j.answer_type for j in answer_all[0].answer_set.all()]
                 return JsonResponse(
                             {
                                 'question_id': next_question.id,
@@ -118,9 +118,9 @@ class SurveyResultView(View):
         data = json.loads(request.body)
         try:
             if data['result']:
-                user = User.objects.filter(user = request.user)
+                user             = User.objects.filter(user = request.user)
                 user_select_list = [i.user_answer for i in user]
-                result = CheckResult(user_select_list)
+                result           = CheckResult(user_select_list)
             if result:
                 return JsonResponse(
                     {
