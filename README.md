@@ -37,7 +37,7 @@
 
 ## 프로젝트 후기
 
-[프로젝트 후기](https://velog.io/@yotae07/1%EC%B0%A8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%9B%84%EA%B8%B0)
+[이태성 프로젝트 후기](https://velog.io/@yotae07/1%EC%B0%A8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%9B%84%EA%B8%B0)
 
 ## 프로젝트 결과물 영상
 
