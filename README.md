@@ -1,7 +1,7 @@
 # 10-bigstar-pharmacy-backend
 # Pilly 클론 프로젝트
 
-맞춤영양제 섭취관리 서비스를 제공해주는 Pilly Web App 클론
+맞춤영양제 섭취관리 서비스를 제공해주는 Pilly Web site 클론
 
 ### 개발 인원 및 기간
 
@@ -17,30 +17,28 @@
 
 ### 1. 기술 스택
 
-- React, React-Router, Fetch API, Sass
+- Python3, Django, Mysql, Aws(EC2, RDS)
 
 ### 2. 협업 툴
 
 - Git, Slack, Notion, Trello
 
-### 3. 구현 기능 상세 설명
+### 3. 구현 기능
 
-- **로그인**
-  - UI 구현
-  - fetch API로 로그인 기능 비동기 처리
-  - 로컬스토리지 사용해서 JWT 활용
-  - 소셜로그인 기능 구현
+- **로그인**(user app)
+    - JWT를 이용하여 토큰 생성
+    - Bcrypt를 이용하여 비밀번호 암호화
+    - 인증 Decorator를 만들어 토큰을 이용하여 통신함
+    - 직접 Validation을 만들어 아이디, 이메일, 전화번호, 비밀번호 검증(실패)
 
-## 작업순서
+- **설문조사**(survey app)
+    - 사용자의 답변에 따라 질문이 나오게 API 구현
+    - 미리 DB에서 Answer에 tag라는 colum으로 다음 질문 아이디를 표시해둠
 
-1. `git checkout master`: 마스터 브랜치로 이동
-2. `git pull origin master`: github에 변화된 최신 코드를 받아온다
-3. `git branch feature/name`: 본인의 브랜치 생성
-4. `git checkout feature/name`: 브랜치로 이동
-5. `git merge master`: 마스터에서 받아온 최신 코드를 브랜치에 병합시킨다
-6. `npm install`: package.json dependencies 에 추가된 모듈 로컬에 다운로드
-7. 최대한 기능별로 쪼개서 작업하기
-8. 프로젝트 상위 디렉토리로 가서 `git add .` 명령어로 내가 수정한 코드를 git stage 에 올린다
-9. `git status`: add가 잘 되었는지 확인
-10. `git commit -m "commit message"`: commit message는 팀원과 상의한 후에 slack 에 공유한다
-11. `git push origin feature/name`: 본인 브랜치에서 작업한 내용을 원격 리포지토리에 올린다
+## 프로젝트 후기
+
+[프로젝트 후기](https://velog.io/@yotae07/1%EC%B0%A8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%9B%84%EA%B8%B0)
+
+## 프로젝트 결과물 영상
+
+[프로젝트 결과물 영상](http://asq.kr/FSzLFOGKdKYl)
