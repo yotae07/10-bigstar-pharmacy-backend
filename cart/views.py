@@ -5,7 +5,7 @@ from django.http import JsonResponse
 
 from user.utils import LoginConfirm
 from .models import Cart
-from task.models import Product
+from product.models import Product
 from user.models import User
 
 class CartAdd(View):

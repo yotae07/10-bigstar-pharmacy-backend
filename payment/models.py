@@ -14,7 +14,7 @@ class Payment(models.Model):
     birth            = models.IntegerField()
     card_kakao       = models.CharField(max_length=20, null=True)
     card_password    = models.IntegerField()
-    product          = models.ForeignKey('task.Product', on_delete=models.SET_NULL, null=True)
+    product          = models.ForeignKey('product.Product', on_delete=models.SET_NULL, null=True)
     timestamp        = models.DateTimeField(auto_now_add=True, auto_now=False)
     updated          = models.DateTimeField(auto_now_add=False, auto_now=True)
     user             = models.ForeignKey('user.User', on_delete=models.SET_NULL, null=True)

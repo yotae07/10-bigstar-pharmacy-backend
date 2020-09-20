@@ -4,7 +4,7 @@ from django.views import View
 from django.http import JsonResponse
 
 from .models import Payment
-from task.models import Product
+from product.models import Product
 from user.models import User
 from cart.models import Cart
 from user.utils import LoginConfirm

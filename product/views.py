@@ -3,11 +3,10 @@ import json, jwt
 from django.views import View
 from django.http import JsonResponse
 
-from proj1.settings import SECRET_KEY, ALGORITHM
-
 from .models import Product, Product_detail
 from cart.models import Cart
 from user.models import User
+from user.utils import LoginConfirm
 
 class ProductMainView(View):
     def get(self, request):
