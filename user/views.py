@@ -64,12 +64,12 @@ class SignUpView(View):
             for content, check in zip(vali, list(data.values())):
                 if not content(check):
                     return JsonResponse({'message': 'INVALID_INPUT'}, status=401)
-            #User(
-            #    name = data['name'],
-            #    email = data['email'],
-            #    contact = data['contact'],
-            #    password = data['password']
-            #).save()
+            User(
+                name = data['name'],
+                email = data['email'],
+                contact = data['contact'],
+                password = data['password']
+            ).save()
             return JsonResponse({'message': 'SUCCESS'}, status=200)
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status=401)
